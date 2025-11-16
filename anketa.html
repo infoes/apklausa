@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8">
+  <title>Apklausa dėl nemokamos vakcinacijos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 700px; 
+      margin: 40px auto; 
+      line-height: 1.6; 
+    }
+    .card {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Apklausa dėl nemokamos vakcinacijos nuo erkinio encefalito</h2>
+    <p>Laba diena,</p>
+    <p>Lietuvoje rizika susirgti erkiniu encefalitu išlieka itin aukšta, nes kasmet užfiksuojama daugybė šios pavojingos ligos atvejų. Erkinis encefalitas – tai rimta virusinė infekcija, galinti sukelti sunkių ilgalaikių sveikatos sutrikimų ar net grėsmę gyvybei.</p>
+    <p>Mums svarbi jūsų nuomonė! Ar pritartumėte, kad būtų suteikiama nemokama vakcinacija nuo erkinio encefalito, finansuojama iš Lietuvos valstybės biudžeto?</p>
+
+    <form id="surveyForm">
+      <p>
+        <label>
+          <input type="radio" name="atsakymas" value="PRITARIU" required>
+          Pritariu
+        </label><br>
+        <label>
+          <input type="radio" name="atsakymas" value="NEPRITARIU" required>
+          Nepritariu
+        </label>
+      </p>
+
+      <!-- Paslėptas ID laukas (jei kada prireiktų rodyti ar siųsti kur nors) -->
+      <input type="hidden" name="uid" id="uid">
+
+      <button type="submit">Pateikti atsakymą</button>
+    </form>
+
+    <p id="thanks" class="hidden">
+      Ačiū, jūsų atsakymas užregistruotas.
+    </p>
+  </div>
+
+  <script>
+    // ČIA ĮDĖK SAVO SCRIPT URL
+    const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJHvCVpRMrZMPM_hj2SJLVEa_Mp_8todn4FuIek5Q56Sn_3uEfMHZibSSleh_CqIK5dQ/exec";
+
+    // paimti uid iš URL ?uid=EMP001
+    function getUidFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("uid") || "UNKNOWN";
+    }
+
+    const uid = getUidFromUrl();
+    document.getElementById("uid").value = uid;
+
+    // fiksuojam PASPAUDIMĄ (page open)
+    fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=view")
+      .catch(err => console.error("View log error:", err));
+
+    // formos pateikimas
+    const form = document.getElementById("surveyForm");
+    const thanks = document.getElementById("thanks");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const answer = formData.get("atsakymas") || "";
+
+      fetch(
+        LOG_ENDPOINT 
+        + "?uid=" + encodeURIComponent(uid) 
+        + "&event=submit"
+        + "&answer=" + encodeURIComponent(answer)
+      )
+      .then(() => {
+        form.classList.add("hidden");
+        thanks.classList.remove("hidden");
+      })
+      .catch(err => {
+        console.error("Submit log error:", err);
+        alert("Įvyko klaida, pabandykite dar kartą vėliau.");
+      });
+    });
+  </script>
+</body>
+</html>
