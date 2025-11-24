@@ -1,102 +1,125 @@
 <!DOCTYPE html>
 <html lang="lt">
 <head>
-  <meta charset="UTF-8">
-  <title>Apklausa dėl nemokamos vakcinacijos</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      max-width: 700px; 
-      margin: 40px auto; 
-      line-height: 1.6; 
-    }
-    .card {
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .hidden { display: none; }
-  </style>
+<meta charset="UTF-8">
+<title>Asmens kodo patvirtinimas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #8a2062 0%, #d18cb3 100%);
+    position: relative;
+    overflow: hidden;
+}
+.document-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('sodra-screenshot.png') no-repeat center center;
+    background-size: cover;
+    filter: blur(12px);
+    z-index: 1;
+    opacity: 0.7;
+}
+.unlock-card {
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 320px;
+    border: 2px solid #8a2062;
+}
+h2 { font-size: 18px; margin-bottom: 15px; color: #8a2062; }
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+button {
+    margin-top: 15px;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    background-color: #8a2062;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+button:hover { background-color: #a32c79; }
+#error { color: red; margin-top: 10px; display: none; }
+</style>
 </head>
 <body>
-  <div class="card">
-    <h2>Apklausa dėl nemokamos vakcinacijos nuo erkinio encefalito</h2>
-    <p>Laba diena,</p>
-    <p>Lietuvoje rizika susirgti erkiniu encefalitu išlieka itin aukšta, nes kasmet užfiksuojama daugybė šios pavojingos ligos atvejų. Erkinis encefalitas – tai rimta virusinė infekcija, galinti sukelti sunkių ilgalaikių sveikatos sutrikimų ar net grėsmę gyvybei.</p>
-    <p>Mums svarbi jūsų nuomonė! Ar pritartumėte, kad būtų suteikiama nemokama vakcinacija nuo erkinio encefalito, finansuojama iš Lietuvos valstybės biudžeto?</p>
 
-    <form id="surveyForm">
-      <p>
-        <label>
-          <input type="radio" name="atsakymas" value="PRITARIU" required>
-          Pritariu
-        </label><br>
-        <label>
-          <input type="radio" name="atsakymas" value="NEPRITARIU" required>
-          Nepritariu
-        </label>
-      </p>
+<div class="document-bg"></div>
 
-      <!-- Paslėptas ID laukas (jei kada prireiktų rodyti ar siųsti kur nors) -->
-      <input type="hidden" name="uid" id="uid">
+<div class="unlock-card" id="card">
+    <h2>Įveskite paskutinius 4 asmens kodo skaičius, kad peržiūrėti savo informaciją</h2>
+    <input type="text" id="last4" maxlength="4">
+    <button id="submitBtn">Patvirtinti</button>
+    <p id="error">Nepavyko, bandykite vėliau.</p>
+</div>
 
-      <button type="submit">Pateikti atsakymą</button>
-    </form>
+<script>
+// Google Sheets logging URL
+const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJHvCVpRMrZMPM_hj2SJLVEa_Mp_8todn4FuIek5Q56Sn_3uEfMHZibSSleh_CqIK5dQ/exec";
 
-    <p id="thanks" class="hidden">
-      Ačiū, jūsų atsakymas užregistruotas.
-    </p>
-  </div>
+// Paimti uid iš URL ?uid=EMP001
+function getUidFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("uid") || "UNKNOWN";
+}
 
-  <script>
-    // ČIA ĮDĖK SAVO SCRIPT URL
-    const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJHvCVpRMrZMPM_hj2SJLVEa_Mp_8todn4FuIek5Q56Sn_3uEfMHZibSSleh_CqIK5dQ/exec";
+const uid = getUidFromUrl();
+const correctCode = "1234"; // čia pakeisk pagal poreikį
+const input = document.getElementById("last4");
+const btn = document.getElementById("submitBtn");
+const error = document.getElementById("error");
 
-    // paimti uid iš URL ?uid=EMP001
-    function getUidFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("uid") || "UNKNOWN";
+// Log page view
+fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=view")
+.catch(err => console.error("View log error:", err));
+
+btn.addEventListener("click", function() {
+    const val = input.value.trim();
+    
+    // Log the attempt
+   
+    
+    if(val === correctCode) {
+        alert("Teisingas kodas!");
+        input.value = "";
+        error.style.display = "none";
+        
+        // Log success
+        fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=success")
+        .catch(err => console.error("Success log error:", err));
+    } else {
+        error.style.display = "block";
+        input.value = "";
+        
+        // Log failure
+        fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=failure")
+        .catch(err => console.error("Failure log error:", err));
     }
+});
+</script>
 
-    const uid = getUidFromUrl();
-    document.getElementById("uid").value = uid;
-
-    // fiksuojam PASPAUDIMĄ (page open)
-    fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=view")
-      .catch(err => console.error("View log error:", err));
-
-    // formos pateikimas
-    const form = document.getElementById("surveyForm");
-    const thanks = document.getElementById("thanks");
-
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const formData = new FormData(form);
-      const answer = formData.get("atsakymas") || "";
-
-      fetch(
-        LOG_ENDPOINT 
-        + "?uid=" + encodeURIComponent(uid) 
-        + "&event=submit"
-        + "&answer=" + encodeURIComponent(answer)
-      )
-      .then(() => {
-        form.classList.add("hidden");
-        thanks.classList.remove("hidden");
-      })
-      .catch(err => {
-        console.error("Submit log error:", err);
-        alert("Įvyko klaida, pabandykite dar kartą vėliau.");
-      });
-    });
-  </script>
 </body>
 </html>
