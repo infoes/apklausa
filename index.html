@@ -2,87 +2,61 @@
 <html lang="lt">
 <head>
   <meta charset="UTF-8">
-  <title>404 — Puslapis nerastas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Svetainė nepasiekiama</title>
 
   <style>
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
+    }
+
+    .unavailable-page {
+      min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+
+    .unavailable-box {
+      max-width: 520px;
+      width: 90%;
+      padding: 35px 25px;
+      background: #ffffff;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .unavailable-box h1 {
+      margin: 0 0 15px;
+      font-size: 28px;
       color: #222;
     }
 
-    .box {
-      max-width: 560px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 32px;
-      text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-
-    h1 {
-      font-size: 42px;
-      margin: 0 0 12px;
-    }
-
-    h2 {
-      font-size: 20px;
-      margin: 0 0 16px;
-    }
-
-    p {
-      font-size: 15px;
-      color: #555;
+    .unavailable-box p {
+      margin: 0 0 10px;
+      font-size: 17px;
       line-height: 1.5;
+      color: #444;
     }
 
-    .small {
-      margin-top: 24px;
-      font-size: 12px;
-      color: #888;
+    .unavailable-box .small-text {
+      font-size: 15px;
+      color: #777;
     }
   </style>
 </head>
-
 <body>
-  <div class="box">
-    <h1>404</h1>
-    <h2>Puslapis nerastas</h2>
-    <p>Ieškomas puslapis neegzistuoja, buvo pašalintas arba laikinai nepasiekiamas.</p>
-    <p class="small">Klaidos kodas: 404</p>
+
+  <div class="unavailable-page">
+    <div class="unavailable-box">
+      <h1>Atsiprašome</h1>
+      <p>Dėl didelio užklausų skaičiaus svetainė šiuo metu yra nepasiekiama.</p>
+      <p class="small-text">Bandykite dar kartą vėliau.</p>
+    </div>
   </div>
 
-  <script>
-    const LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbyxpwxAqDEzIyyRFlKaRNolcEExlO38B-5vkkJS06XHkKuUEFnNeFoy1HvOPGtKYBzM/exec";
-
-    function getUidFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("uid") || "UNKNOWN";
-    }
-
-    const uid = getUidFromUrl();
-
-    const page = window.location.href;
-    const ua = navigator.userAgent;
-
-    const url =
-      LOG_ENDPOINT +
-      "?uid=" + encodeURIComponent(uid) +
-      "&event=404_view" +
-      "&answer=" +
-      "&page=" + encodeURIComponent(page) +
-      "&ua=" + encodeURIComponent(ua);
-
-    fetch(url).catch(function(error) {
-      console.error("Log error:", error);
-    });
-  </script>
 </body>
 </html>
